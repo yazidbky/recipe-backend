@@ -1,12 +1,12 @@
 import express from "express";
-import { protect } from "../middlewares/authMiddleware.js";
+import { protect } from "../middlewares/auth_middlewares.mjs";
 import {
     createRecipe,
     getRecipes,
     getRecipeById,
     updateRecipe,
     deleteRecipe,
-} from "../controllers/recipeController.js";
+} from "../controllers/recipeControllers.mjs";
 import multer from "multer";
 
 const storage = multer.diskStorage({

@@ -1,8 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import recipeRoutes from "./routes/recipeRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
+import recipeRoutes from "../routes/recipeRoutes.mjs";
+import userRoutes from "../routes/userRoutes.mjs";
 import path from "path";
 import cors from "cors";
 import { fileURLToPath } from "url"; // Import fileURLToPath
