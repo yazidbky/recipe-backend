@@ -1,5 +1,4 @@
 import Recipe from "../models/Recipe.mjs";
-import upload from "../middlewares/upload_middleware.mjs";   
 
 
 export const createRecipe = async (req, res) => {
@@ -30,6 +29,10 @@ export const createRecipe = async (req, res) => {
 
 export const getRecipes = async (req, res) => {
     try {
+
+        console.log("Request query:", req.query);
+        
+
         const { search, category } = req.query;
 
         const query = {};
