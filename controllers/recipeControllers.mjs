@@ -1,9 +1,11 @@
 import Recipe from "../models/Recipe.mjs";
+import upload from "../middlewares/uploadMiddleware.mjs";   
+
 
 export const createRecipe = async (req, res) => {
     try {
         const { title, description, ingredients, instructions, category } = req.body;
-        const image = req.file ? req.file.filename : null;
+        const image = req.file ? `/uploads/${req.file.filename}` : null;
 
         const recipe = new Recipe({
             title,
@@ -49,7 +51,7 @@ export const getRecipeById = async (req, res) => {
 export const updateRecipe = async (req, res) => {
     try {
         const { title, description, ingredients, instructions, category } = req.body;
-        const image = req.file ? req.file.filename : null;
+        const image = req.file ? `/uploads/${req.file.filename}` : null;
 
         const updatedRecipe = await Recipe.findByIdAndUpdate(
             req.params.id,
@@ -59,7 +61,7 @@ export const updateRecipe = async (req, res) => {
                 ingredients,
                 instructions,
                 category,
-                image,
+                ...(image && { image }), // Only update the image if a new one is provided
             },
             { new: true }
         );

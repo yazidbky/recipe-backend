@@ -7,14 +7,8 @@ import {
     updateRecipe,
     deleteRecipe,
 } from "../controllers/recipeControllers.mjs";
-import multer from "multer";
+import upload from "../middlewares/uploadMiddleware.mjs"; // Import multer config
 
-const storage = multer.diskStorage({
-    destination: "uploads/",
-    filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
-});
-
-const upload = multer({ storage });
 const router = express.Router();
 
 router
