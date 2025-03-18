@@ -4,6 +4,10 @@ import upload from "../middlewares/upload_middleware.mjs";
 
 export const createRecipe = async (req, res) => {
     try {
+
+        console.log("Request Body:", req.body);
+        console.log("Uploaded File:", req.file);
+        
         const { title, description, ingredients, instructions, category } = req.body;
         const image = req.file ? `/uploads/${req.file.filename}` : null;
 
