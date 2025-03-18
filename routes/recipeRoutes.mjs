@@ -7,7 +7,7 @@ import {
     updateRecipe,
     deleteRecipe,
 } from "../controllers/recipeControllers.mjs";
-import upload from "../middlewares/uploadMiddleware.mjs"; // Import multer config
+import upload from "../middlewares/upload_middleware.mjs"; 
 
 const router = express.Router();
 

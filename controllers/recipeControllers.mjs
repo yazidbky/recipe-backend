@@ -1,5 +1,5 @@
 import Recipe from "../models/Recipe.mjs";
-import upload from "../middlewares/uploadMiddleware.mjs";   
+import upload from "../middlewares/upload_middleware.mjs";   
 
 
 export const createRecipe = async (req, res) => {
