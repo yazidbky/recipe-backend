@@ -1,33 +1,28 @@
 import multer from "multer";
-import { bucket } from "../firebaseConfig.mjs";
-import { v4 as uuidv4 } from "uuid";
-import { Readable } from "stream";
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import dotenv from "dotenv";
 
-// Configure Multer to process files but not store them locally
-const storage = multer.memoryStorage();
+dotenv.config();
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// Cloudinary storage setup
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "recipes", // Folder name in Cloudinary
+    format: async (req, file) => "png", // Convert to PNG
+    public_id: (req, file) => file.originalname.split(".")[0],
+  },
+});
+
+// Multer setup
 const upload = multer({ storage });
 
-const uploadToFirebase = async (file) => {
-  return new Promise((resolve, reject) => {
-    const fileName = `${uuidv4()}-${file.originalname}`;
-    const fileRef = bucket.file(fileName);
-
-    const stream = fileRef.createWriteStream({
-      metadata: {
-        contentType: file.mimetype,
-      },
-    });
-
-    stream.on("error", (err) => reject(err));
-    stream.on("finish", async () => {
-      // Make file publicly accessible
-      await fileRef.makePublic();
-      resolve(`https://storage.googleapis.com/${bucket.name}/${fileName}`);
-    });
-
-    // Convert buffer to readable stream and pipe it
-    Readable.from(file.buffer).pipe(stream);
-  });
-};
-
-export { upload, uploadToFirebase };
+export { upload };
