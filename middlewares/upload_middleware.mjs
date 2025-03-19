@@ -2,6 +2,7 @@ import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import dotenv from "dotenv";
+import { v4 as uuidv4 } from "uuid"; // Unique ID for file names
 
 dotenv.config();
 
@@ -16,19 +17,29 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "recipes", // Folder name in Cloudinary
-    format: async (req, file) => "png", // Convert to PNG
-    public_id: (req, file) => file.originalname.split(".")[0],
+    folder: "recipes", // Cloudinary folder
+    format: async (req, file) => file.mimetype.split("/")[1], // Keep original format
+    public_id: (req, file) => `${uuidv4()}-${file.originalname.split(".")[0]}`,
   },
 });
 
-// Multer setup
-const upload = multer({ storage });
+// Multer setup with file filter
+const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image files are allowed!"), false);
+    }
+  },
+});
 
+// Debugging middleware
 const debugUpload = (req, res, next) => {
   console.log("Multer File Data:", req.file);
   console.log("Multer Debug: req.body =>", req.body);
   next();
 };
 
-export { upload , debugUpload };
+export { upload, debugUpload };
