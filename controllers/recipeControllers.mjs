@@ -3,29 +3,32 @@ import Recipe from "../models/Recipe.mjs";
 
 export const createRecipe = async (req, res) => {
     try {
-
-        console.log("Request Body:", req.body);
-        console.log("Uploaded File:", req.file);
-        
-        const { title, description, ingredients, instructions, category } = req.body;
-        const image = req.file ? `/uploads/${req.file.filename}` : null;
-
-        const recipe = new Recipe({
-            title,
-            description,
-            ingredients,
-            instructions,
-            category,
-            image,
-            createdBy: req.user.id,
-        });
-
-        await recipe.save();
-        res.status(201).json(recipe);
+      console.log("Request Body:", req.body);
+      console.log("Uploaded File:", req.file);
+  
+      const { title, description, ingredients, instructions, category } = req.body;
+  
+      let imageUrl = null;
+      if (req.file) {
+        imageUrl = await uploadToFirebase(req.file);
+      }
+  
+      const recipe = new Recipe({
+        title,
+        description,
+        ingredients,
+        instructions,
+        category,
+        image: imageUrl, // Save Firebase Storage URL
+        createdBy: req.user.id,
+      });
+  
+      await recipe.save();
+      res.status(201).json(recipe);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+      res.status(500).json({ message: err.message });
     }
-};
+  };
 
 export const getRecipes = async (req, res) => {
     try {

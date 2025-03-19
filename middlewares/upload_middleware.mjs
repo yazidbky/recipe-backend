@@ -1,34 +1,34 @@
 import multer from "multer";
+import { bucket } from "../firebaseConfig.mjs";
+import { v4 as uuidv4 } from "uuid";
 import path from "path";
+import { Readable } from "stream";
 
-// Define storage settings
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, "uploads/"); // Save uploaded files in 'uploads' folder
-    },
-    filename: function (req, file, cb) {
-        cb(null, `${Date.now()}-${file.originalname}`);
-    },
-});
+// Configure Multer to process files but not store them locally
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
-// Define file filter to accept only images
-const fileFilter = (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|gif/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
+const uploadToFirebase = async (file) => {
+  return new Promise((resolve, reject) => {
+    const fileName = `${uuidv4()}-${file.originalname}`;
+    const fileRef = bucket.file(fileName);
 
-    if (extname && mimetype) {
-        cb(null, true);
-    } else {
-        cb(new Error("Only images (JPEG, PNG, GIF) are allowed!"), false);
-    }
+    const stream = fileRef.createWriteStream({
+      metadata: {
+        contentType: file.mimetype,
+      },
+    });
+
+    stream.on("error", (err) => reject(err));
+    stream.on("finish", async () => {
+      // Make file publicly accessible
+      await fileRef.makePublic();
+      resolve(`https://storage.googleapis.com/${bucket.name}/${fileName}`);
+    });
+
+    // Convert buffer to readable stream and pipe it
+    Readable.from(file.buffer).pipe(stream);
+  });
 };
 
-// Configure Multer
-const upload = multer({
-    storage: storage,
-    fileFilter: fileFilter,
-    limits: { fileSize: 5 * 1024 * 1024 }, // Max file size: 5MB
-});
-
-export default upload;
+export { upload, uploadToFirebase };
