@@ -16,23 +16,28 @@ cloudinary.config({
 // Cloudinary storage setup
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  params: {
-    folder: "recipes", // Cloudinary folder
-    format: async (req, file) => file.mimetype.split("/")[1], // Keep original format
-    public_id: (req, file) => `${uuidv4()}-${file.originalname.split(".")[0]}`,
+  params: async (req, file) => {
+    console.log("Incoming file:", file); // ✅ Debugging line
+    return {
+      folder: "recipes",
+      format: file.mimetype.split("/")[1],
+      public_id: `${uuidv4()}-${file.originalname.split(".")[0]}`,
+    };
   },
 });
+
 
 // Multer setup with file filter
 const upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith("image/")) {
+    if (file.mimetype.startsWith("image/")) { 
       cb(null, true);
     } else {
       cb(new Error("Only image files are allowed!"), false);
     }
-  },
+  }
+  
 });
 
 // Debugging middleware

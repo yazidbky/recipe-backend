@@ -12,7 +12,8 @@ import {upload , debugUpload} from "../middlewares/upload_middleware.mjs";
 
 const router = express.Router();
 
-router.route("/")
+router
+  .route("/")
   .get(getRecipes)
   .post(protect, upload.single("image"),debugUpload, createRecipe);
 
