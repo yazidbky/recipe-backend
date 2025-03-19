@@ -14,7 +14,7 @@ const serviceAccount = JSON.parse(
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  storageBucket: "your-project-id.appspot.com", // Replace with your Firebase project ID
+  storageBucket: "recipe-backend-21154", // Replace with your Firebase project ID
 });
 
 const bucket = admin.storage().bucket();

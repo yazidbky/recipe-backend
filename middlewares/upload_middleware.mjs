@@ -1,7 +1,6 @@
 import multer from "multer";
 import { bucket } from "../firebaseConfig.mjs";
 import { v4 as uuidv4 } from "uuid";
-import path from "path";
 import { Readable } from "stream";
 
 // Configure Multer to process files but not store them locally
