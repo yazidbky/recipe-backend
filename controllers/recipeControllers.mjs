@@ -5,32 +5,32 @@ import { uploadToFirebase } from "../middlewares/upload_middleware.mjs";  // Add
 
 export const createRecipe = async (req, res) => {
     try {
-      console.log("Request Body:", req.body);
-      console.log("Uploaded File:", req.file);
-  
-      const { title, description, ingredients, instructions, category } = req.body;
-  
-      let imageUrl = null;
-      if (req.file) {
-        imageUrl = await uploadToFirebase(req.file);
-      }
-  
-      const recipe = new Recipe({
-        title,
-        description,
-        ingredients,
-        instructions,
-        category,
-        image: imageUrl, // Save Firebase Storage URL
-        createdBy: req.user.id,
-      });
-  
-      await recipe.save();
-      res.status(201).json(recipe);
+        console.log("Request Body:", req.body);
+        console.log("Uploaded File:", req.file);
+
+        const { title, description, ingredients, instructions, category } = req.body;
+
+        let imageUrl = null;
+        if (req.file) {
+            imageUrl = req.file.path; // Cloudinary returns the URL in req.file.path
+        }
+
+        const recipe = new Recipe({
+            title,
+            description,
+            ingredients,
+            instructions,
+            category,
+            image: imageUrl, // Save Cloudinary URL
+            createdBy: req.user.id,
+        });
+
+        await recipe.save();
+        res.status(201).json(recipe);
     } catch (err) {
-      res.status(500).json({ message: err.message });
+        res.status(500).json({ message: err.message });
     }
-  };
+};
 
 export const getRecipes = async (req, res) => {
     try {
@@ -66,7 +66,7 @@ export const updateRecipe = async (req, res) => {
 
         let imageUrl = null;
         if (req.file) {
-            imageUrl = await uploadToFirebase(req.file); // Upload image to Firebase
+            imageUrl = req.file.path; // Cloudinary image URL
         }
 
         const updatedRecipe = await Recipe.findByIdAndUpdate(
@@ -86,7 +86,7 @@ export const updateRecipe = async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
-};
+}
 
 
 export const deleteRecipe = async (req, res) => {
