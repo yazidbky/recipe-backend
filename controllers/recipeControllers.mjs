@@ -1,4 +1,6 @@
 import Recipe from "../models/Recipe.mjs";
+import { uploadToFirebase } from "../middlewares/upload_middleware.mjs";  // Add this line
+
 
 
 export const createRecipe = async (req, res) => {
@@ -61,7 +63,11 @@ export const getRecipeById = async (req, res) => {
 export const updateRecipe = async (req, res) => {
     try {
         const { title, description, ingredients, instructions, category } = req.body;
-        const image = req.file ? `/uploads/${req.file.filename}` : null;
+
+        let imageUrl = null;
+        if (req.file) {
+            imageUrl = await uploadToFirebase(req.file); // Upload image to Firebase
+        }
 
         const updatedRecipe = await Recipe.findByIdAndUpdate(
             req.params.id,
@@ -71,7 +77,7 @@ export const updateRecipe = async (req, res) => {
                 ingredients,
                 instructions,
                 category,
-                ...(image && { image }), // Only update the image if a new one is provided
+                ...(imageUrl && { image: imageUrl }), // Update image only if provided
             },
             { new: true }
         );
@@ -81,6 +87,7 @@ export const updateRecipe = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
 
 export const deleteRecipe = async (req, res) => {
     try {

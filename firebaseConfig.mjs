@@ -1,20 +1,17 @@
 import admin from "firebase-admin";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { readFileSync } from "fs";
+import dotenv from "dotenv";
+import { readFile } from "fs/promises";
+import path from "path";
 
-// Convert URL to path
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+dotenv.config();
 
-// Load Firebase credentials
-const serviceAccount = JSON.parse(
-  readFileSync(__dirname + "/firebaseAdminConfig.json", "utf8")
-);
+// Load Firebase credentials from JSON file
+const serviceAccountPath = path.resolve("firebaseAdminConfig.json");
+const serviceAccount = JSON.parse(await readFile(serviceAccountPath, "utf8"));
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  storageBucket: "recipe-backend-21154", // Replace with your Firebase project ID
+  storageBucket: "recipe-backend-21154", // Replace with your Firebase Storage bucket
 });
 
 const bucket = admin.storage().bucket();
