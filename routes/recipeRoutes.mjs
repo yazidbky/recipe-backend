@@ -7,15 +7,14 @@ import {
     updateRecipe,
     deleteRecipe,
 } from "../controllers/recipeControllers.mjs";
-import {upload} from "../middlewares/upload_middleware.mjs"; 
-
+import {upload , debugUpload} from "../middlewares/upload_middleware.mjs"; 
 
 
 const router = express.Router();
 
 router.route("/")
   .get(getRecipes)
-  .post(protect, upload.single("image"), createRecipe);
+  .post(protect, upload.single("image"),debugUpload, createRecipe);
 
 router
     .route("/:id")

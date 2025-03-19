@@ -25,4 +25,9 @@ const storage = new CloudinaryStorage({
 // Multer setup
 const upload = multer({ storage });
 
-export { upload };
+const debugUpload = (req, res, next) => {
+  console.log("Multer File Data:", req.file);
+  next();
+};
+
+export { upload , debugUpload };
