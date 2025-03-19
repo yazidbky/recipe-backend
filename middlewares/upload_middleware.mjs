@@ -27,6 +27,7 @@ const upload = multer({ storage });
 
 const debugUpload = (req, res, next) => {
   console.log("Multer File Data:", req.file);
+  console.log("Multer Debug: req.body =>", req.body);
   next();
 };
 
