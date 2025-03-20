@@ -7,6 +7,7 @@ const recipeSchema = new mongoose.Schema({
     instructions: String,
     category: String,
     image: String,
+    time : String,
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 

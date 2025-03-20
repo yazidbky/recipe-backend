@@ -7,7 +7,7 @@ export const createRecipe = async (req, res) => {
         console.log("Request Body:", req.body);
         console.log("Uploaded File:", req.file);
 
-        const { title, description, ingredients, instructions, category } = req.body;
+        const { title, description, ingredients, instructions, category , time} = req.body;
 
         let imageUrl = null;
         if (req.file) {
@@ -20,6 +20,7 @@ export const createRecipe = async (req, res) => {
             ingredients,
             instructions,
             category,
+            time,
             image: imageUrl, // Save Cloudinary URL
             createdBy: req.user.id,
         });
@@ -76,6 +77,7 @@ export const updateRecipe = async (req, res) => {
                 ingredients,
                 instructions,
                 category,
+                time,
                 ...(imageUrl && { image: imageUrl }), // Update image only if provided
             },
             { new: true }
