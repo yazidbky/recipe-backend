@@ -34,15 +34,12 @@ export const createRecipe = async (req, res) => {
 
 export const getRecipes = async (req, res) => {
     try {
-
-        console.log("Request query:", req.query);
-        
-
-        const { search, category } = req.query;
+        const { search, category, userId } = req.query;
 
         const query = {};
         if (search) query.title = { $regex: search, $options: "i" };
         if (category) query.category = category;
+        if (userId) query.createdBy = userId; // Filter by user ID
 
         const recipes = await Recipe.find(query);
         res.json(recipes);
