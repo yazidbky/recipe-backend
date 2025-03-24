@@ -39,9 +39,11 @@ export const getRecipes = async (req, res) => {
         const query = {};
         if (search) query.title = { $regex: search, $options: "i" };
         if (category) query.category = category;
-        if (userId) query.createdBy = userId; // Filter by user ID
+        if (userId) query.createdBy = userId;
 
-        const recipes = await Recipe.find(query);
+        const recipes = await Recipe.find(query)
+            .populate('createdBy', 'name email image'); // Populate user data
+            
         res.json(recipes);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -50,7 +52,11 @@ export const getRecipes = async (req, res) => {
 
 export const getRecipeById = async (req, res) => {
     try {
-        const recipe = await Recipe.findById(req.params.id);
+        const recipe = await Recipe.findById(req.params.id)
+            .populate('createdBy', 'name email image'); // Populate user data
+        if (!recipe) {
+            return res.status(404).json({ message: 'Recipe not found' });
+        }
         res.json(recipe);
     } catch (err) {
         res.status(500).json({ message: err.message });
