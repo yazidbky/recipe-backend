@@ -65,7 +65,7 @@ export const getRecipeById = async (req, res) => {
 
 export const updateRecipe = async (req, res) => {
     try {
-        const { title, description, ingredients, instructions, category } = req.body;
+        const { title, description, ingredients, instructions, category , time} = req.body;
 
         let imageUrl = null;
         if (req.file) {
@@ -91,6 +91,8 @@ export const updateRecipe = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 }
+
+
 
 
 export const deleteRecipe = async (req, res) => {
