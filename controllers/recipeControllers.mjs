@@ -65,30 +65,41 @@ export const getRecipeById = async (req, res) => {
 
 export const updateRecipe = async (req, res) => {
     try {
-        const { title, description, ingredients, instructions, category , time} = req.body;
+        // Add time to destructured fields
+        const { title, description, ingredients, instructions, category, time } = req.body;
+        
+        console.log("Update Data:", req.body); // Add logging
+        
+        let updateData = {
+            title,
+            description,
+            ingredients,
+            instructions,
+            category,
+            time
+        };
 
-        let imageUrl = null;
         if (req.file) {
-            imageUrl = req.file.path; // Cloudinary image URL
+            updateData.image = req.file.path;
         }
 
         const updatedRecipe = await Recipe.findByIdAndUpdate(
             req.params.id,
-            {
-                title,
-                description,
-                ingredients,
-                instructions,
-                category,
-                time,
-                ...(imageUrl && { image: imageUrl }), // Update image only if provided
-            },
+            updateData,
             { new: true }
         );
-
+        
+        if (!updatedRecipe) {
+            return res.status(404).json({ message: 'Recipe not found' });
+        }
+        
         res.json(updatedRecipe);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error("Update error:", err);
+        res.status(500).json({ 
+            message: err.message,
+            stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+        });
     }
 }
 
