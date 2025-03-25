@@ -16,6 +16,7 @@ export const register = async (req, res) => {
     }
 };
 
+// In your login controller
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -26,7 +27,11 @@ export const login = async (req, res) => {
         if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-        res.json({ token, userId: user._id });
+        res.json({ 
+            token, 
+            userId: user._id,
+            name: user.name // Add this
+        });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
