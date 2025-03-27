@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 export const protect = (req, res, next) => {
     let token;
 
-    // Ensure the token exists and follows the "Bearer <token>" format
+
     if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
         token = req.headers.authorization.split(" ")[1];
     }
@@ -14,7 +14,7 @@ export const protect = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded; // Store user data in `req.user` for later use
+        req.user = decoded; 
         next();
     } catch (err) {
         res.status(401).json({ message: "Invalid or expired token" });

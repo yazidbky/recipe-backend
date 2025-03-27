@@ -11,7 +11,7 @@ export const createRecipe = async (req, res) => {
 
         let imageUrl = null;
         if (req.file) {
-            imageUrl = req.file.path; // Cloudinary returns the URL in req.file.path
+            imageUrl = req.file.path; 
         }
 
         const recipe = new Recipe({
@@ -21,7 +21,7 @@ export const createRecipe = async (req, res) => {
             instructions,
             category,
             time,
-            image: imageUrl, // Save Cloudinary URL
+            image: imageUrl,
             createdBy: req.user.id,
         });
 
@@ -42,7 +42,7 @@ export const getRecipes = async (req, res) => {
         if (userId) query.createdBy = userId;
 
         const recipes = await Recipe.find(query)
-            .populate('createdBy', 'name email image'); // Populate user data
+            .populate('createdBy', 'name email image'); 
             
         res.json(recipes);
     } catch (err) {
@@ -53,7 +53,7 @@ export const getRecipes = async (req, res) => {
 export const getRecipeById = async (req, res) => {
     try {
         const recipe = await Recipe.findById(req.params.id)
-            .populate('createdBy', 'name email image'); // Populate user data
+            .populate('createdBy', 'name email image');
         if (!recipe) {
             return res.status(404).json({ message: 'Recipe not found' });
         }
@@ -68,10 +68,10 @@ export const getRecipeById = async (req, res) => {
 
 export const updateRecipe = async (req, res) => {
     try {
-        // Add time to destructured fields
+       
         const { title, description, ingredients, instructions, category, time } = req.body;
         
-        console.log("Update Data:", req.body); // Add logging
+        console.log("Update Data:", req.body); 
         
         let updateData = {
             title,
